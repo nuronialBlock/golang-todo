@@ -21,7 +21,15 @@ func (t *Todo) Insert() error {
 		t.ID = bson.NewObjectId()
 		t.CreatedAt = t.ModifiedAt
 	}
-	// log.Println(*t)
-	_, err := sess.DB("").C("texts").UpsertId(t.ID, t)
+	_, err := sess.DB("").C("todos").UpsertId(t.ID, t)
 	return err
+}
+
+func ListTodos() ([]Todo, error) {
+	todos := []Todo{}
+	err := sess.DB("").C("todos").Find(nil).All(&todos)
+	if err != nil {
+		return nil, err
+	}
+	return todos, nil
 }

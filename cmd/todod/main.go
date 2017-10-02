@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	URL = "mongodb://localhost:27017/todo"
+	URL = "mongodb://localhost:27017/todo-db"
 )
 
 func main() {
@@ -16,9 +16,14 @@ func main() {
 	}
 	println("Got the session")
 	todo := &data.Todo{}
-	todo.Text = "Learn redux"
+	todo.Text = "Learn react-redux"
 	err = todo.Insert()
 	if err != nil {
 		log.Fatalln(err)
 	}
+	todos, err := data.ListTodos()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(todos)
 }
