@@ -2,7 +2,9 @@ package main
 
 import (
 	"golang-todo/data"
+	"golang-todo/ui"
 	"log"
+	"net/http"
 )
 
 const (
@@ -14,16 +16,7 @@ func main() {
 	if err != nil {
 		println("Couldn't connect the DB")
 	}
-	println("Got the session")
-	todo := &data.Todo{}
-	todo.Text = "Learn react-redux"
-	err = todo.Insert()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	todos, err := data.ListTodos()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.Println(todos)
+
+	http.Handle("/", ui.NewServer())
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
