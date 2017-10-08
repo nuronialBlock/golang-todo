@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 )
 
 const (
@@ -11,6 +12,8 @@ const (
 	post   string = "POST"
 	delete string = "DELETE"
 )
+
+var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
 var router = mux.NewRouter()
 

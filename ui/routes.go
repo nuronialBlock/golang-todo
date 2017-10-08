@@ -46,6 +46,13 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("Welcome,", username)
+	session, err := store.Get(r, "s")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	session.Values["accountID"] = acc.ID.Hex()
+	session.Save(r, w)
 }
 
 func HandleSignup(w http.ResponseWriter, r *http.Request) {
