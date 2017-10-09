@@ -15,6 +15,15 @@ type Account struct {
 	ModifiedAt time.Time `bson:"modified_at"`
 }
 
+func GetAccount(id bson.ObjectId) (Account, error) {
+	acc := Account{}
+	err := sess.DB("").C("accounts").FindId(id).One(&acc)
+	if err != nil {
+		return Account{}, err
+	}
+	return acc, nil
+}
+
 func GetAccountByUsername(username string) (Account, error) {
 	acc := Account{}
 	err := sess.DB("").C("accounts").Find(bson.M{"username": username}).One(&acc)

@@ -6,10 +6,13 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/gorilla/context"
 	mgo "gopkg.in/mgo.v2"
 )
 
 func serveTodoList(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("here in todos")
+	fmt.Println(context.Get(r, "accID"))
 	todos, err := data.ListTodos()
 	if err != nil {
 		http.Error(w, "Not Found", http.StatusNotFound)
@@ -51,6 +54,8 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	context.Set(r, "accID", acc.ID.Hex())
 	session.Values["accountID"] = acc.ID.Hex()
 	session.Save(r, w)
 }
