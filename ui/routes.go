@@ -11,8 +11,14 @@ import (
 )
 
 func serveTodoList(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("here in todos")
-	fmt.Println(context.Get(r, "accID"))
+	sess, err := store.Get(r, "s")
+	fmt.Println("Serving for ID:", sess.Values["accountID"])
+
+	fmt.Println("Context: ", context.Get(r, sessKey).(string))
+
+	if err != nil {
+		fmt.Println(err)
+	}
 	todos, err := data.ListTodos()
 	if err != nil {
 		http.Error(w, "Not Found", http.StatusNotFound)
@@ -55,7 +61,9 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	context.Set(r, "accID", acc.ID.Hex())
+	context.Set(r, sessKey, acc.ID.Hex())
+	context.Clear(r)
+	fmt.Println("Context: ", context.Get(r, sessKey))
 	session.Values["accountID"] = acc.ID.Hex()
 	session.Save(r, w)
 }
@@ -90,6 +98,14 @@ func HandleSignup(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(acc)
 }
 
+func HandleLogout(w http.ResponseWriter, r *http.Request) {
+	sess, err := store.Get(r, "s")
+	if err != nil {
+		fmt.Println(err)
+	}
+	sess.Values["accountID"] = ""
+}
+
 func init() {
 	router.
 		Methods(get).
@@ -99,6 +115,10 @@ func init() {
 		Methods(post).
 		Path("/login").
 		HandlerFunc(HandleLogin)
+	router.
+		Methods(post).
+		Path("/logout").
+		HandlerFunc(HandleLogout)
 	router.
 		Methods(post).
 		Path("/signup").
